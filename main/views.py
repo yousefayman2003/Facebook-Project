@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import RegisterForm, PostingModelForm, UserUpdateForm, PostingUpdateForm, CommentForm
+from .forms import RegisterForm, PostingModelForm, UserUpdateForm, PostingUpdateForm, CommentForm, like_clicked
 from django.contrib.auth import login, logout, authenticate
 from .models import User, PostModel, Comment
 from django.contrib.auth.decorators import login_required
@@ -23,6 +23,7 @@ def home(request):
     users = User.objects.raw('SELECT * FROM user')
     posts = PostModel.objects.raw(
         'SELECT * FROM post order by date_created desc;')
+
     if request.method == 'POST':
         form = PostingModelForm(request.POST)
         print(request.POST)
@@ -51,9 +52,10 @@ def home(request):
 
 @login_required
 def profile(request):
+    pk = request.user.id
+    posts = PostModel.objects.raw(
+        f'SELECT * FROM post WHERE created_by={pk}')
     if request.method == 'POST':
-        print(request.POST)
-        print(request.FILES)
         user_form = UserUpdateForm(
             request.POST, instance=request.user)
         if user_form.is_valid():
@@ -71,6 +73,7 @@ def profile(request):
         user_form = UserUpdateForm(instance=request.user)
     context = {
         'user_form': user_form,
+        'posts': posts
     }
 
     return render(request, 'main/profile.html', context)
@@ -79,6 +82,10 @@ def profile(request):
 @login_required
 def post_detail(request, pk):
     post = PostModel.objects.raw(f'SELECT * FROM post WHERE id={pk};')[0]
+    like = like_clicked(request.GET)
+    if 'button' in request.GET:
+        post.likes_number += 1
+        post.save()
     if request.method == 'POST':
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -91,7 +98,8 @@ def post_detail(request, pk):
         form = CommentForm()
     context = {
         'post': post,
-        'form': form
+        'form': form,
+        'like': like
     }
     return render(request, 'main/post_detail.html', context)
 

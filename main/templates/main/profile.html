@@ -76,7 +76,29 @@
             </div>
         </div>
     </div>
-
+    {% for post in posts %}
+    <div class="card shadow my-3">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-2">
+            <img class="img-thumbnail" height="150px" width="150px" src="{{post.created_by.image.url}}" alt="img">
+          </div>
+          <div class="col-md-8">
+            <div class="row">
+              <div class="col-sm-6"><strong>@{{post.created_by.first_name}} {{post.created_by.last_name}}</strong></div>
+              <div class="col-sm-6">{{post.date_created}}</div>
+            </div>
+            <hr>
+            <a class="h3" href="/post_detail/{{post.id}}">{{post.title}}</a>
+            <p class="text-justify my-3">
+              {{post.content}}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
     integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
     crossorigin="anonymous"></script>
@@ -106,7 +128,6 @@
                         <form method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
                             {{ user_form|crispy }}
-                            {{ p_form|crispy }}
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary btn-sm"
                                     data-dismiss="modal">Cancel</button>
@@ -116,7 +137,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

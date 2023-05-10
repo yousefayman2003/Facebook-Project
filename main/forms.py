@@ -76,3 +76,11 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['content',]
+
+
+class like_clicked(forms.ModelForm):
+    button = forms.CharField(widget=forms.HiddenInput(), initial='Submit')
+
+    class Meta:
+        model = PostModel
+        fields = ['button',]
