@@ -22,7 +22,7 @@ def sign_up(request):
 def home(request):
     users = User.objects.raw('SELECT * FROM user')
     posts = PostModel.objects.raw(
-        'SELECT * FROM post order by date_created desc')
+        'SELECT * FROM post order by date_created desc;')
     if request.method == 'POST':
         form = PostingModelForm(request.POST)
         print(request.POST)
