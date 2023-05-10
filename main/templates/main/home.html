@@ -28,11 +28,14 @@
       <div class="card shadow my-3">
         <div class="card-body">
           <div class="row">
-            <div class="col-md-4">
-              <img class="img-thumbnail" src="{{post.created_by.image.url}}" alt="img">
+            <div class="col-md-2">
+              <img class="img-thumbnail" height="150px" width="150px" src="{{post.created_by.image.url}}" alt="img">
             </div>
             <div class="col-md-8">
-              <small>{{post.date_created}}</small>
+              <div class="row">
+                <div class="col-sm-6"><strong>@{{post.created_by.first_name}} {{post.created_by.last_name}}</strong></div>
+                <div class="col-sm-6">{{post.date_created}}</div>
+              </div>
               <hr>
               <a class="h3" href="/post_detail/{{post.id}}">{{post.title}}</a>
               <p class="text-justify my-3">
