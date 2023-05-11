@@ -1,5 +1,5 @@
 from typing import Any
-from django.db import models
+from django.db import models, connection
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.core.validators import FileExtensionValidator
 
@@ -144,3 +144,8 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.content
+
+
+def make_query(model, query):
+
+    return model.objects.raw(query)

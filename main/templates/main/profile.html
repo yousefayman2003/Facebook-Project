@@ -17,30 +17,34 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-primary bg-primary">
-        <div class="container-fluid">
-          <div>
-            <ul class="navbar-nav">
-              <li class="nav-item">
-                <h1 class="nav-link text-white" ><a class="nav-link text-white" href="/home ">Facebook</a></h1>
-              </li>
-              
-            </ul>
-          </div>
-          <div>
-            <ul class="navbar-nav">
-             
-              <span class="navbar-text text-white">Logged in as {{user.first_name}} {{user.last_name}} | </span>
-              <li class="nav-item">
-                <a class="nav-link text-white" href="/profile">Profile</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link text-white" href="/logout">Logout</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+  <nav class="navbar navbar-expand-lg navbar-primary bg-primary">
+    <div class="container-fluid">
+      <div>
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <h1 class="nav-link text-white" ><a class="nav-link text-white" href="/home ">Home</a></h1>
+          </li>
+          <li class="nav-item">
+            <form method="get" class="search-bar justify-content-start" style="margin-left: 40px; margin-top: 27px;">
+              <input type="text" class="form-control" name="q" id="id_q_large" placeholder="Search...">
+            </form>
+          </li>    
+        </ul>
+      </div>
+      <div>
+        <ul class="navbar-nav">
+         
+          <span class="navbar-text text-white">Logged in as {{user.first_name}} {{user.last_name}} | </span>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/profile/{{user.id}}">Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/logout">Logout</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
     <div class="container">
         <div class="row mt-5 pt-3">
             <div class="col-md-6 offset-md-3">
@@ -48,25 +52,27 @@
                     <div class="card-body">
                         <span class="h4">Profile Page</span>
                         <!-- Button trigger modal -->
+                        {% if user.email == user_profile.email%}
                         <span>
                             <button type="button" class="btn btn-info float-right btn-sm" data-toggle="modal"
                                 data-target="#exampleModal">
                                 Edit Profile
                             </button>
                         </span>
+                        {% endif %}
 
 
                         <hr>
                         <div class="row">
                             <div class="col-md-4">
-                                <img class="img-thumbnail" src="{{ user.image.url }}" alt="profile-img">
+                                <img class="img-thumbnail" src="{{ user_profile.image.url }}" alt="profile-img">
                             </div>
                             <div class="col-md-8">
-                                <h6>Name: {{ user.first_name }} {{ user.last_name }}</h6>
-                                <h6>Email: {{ user.email }} </h6>
-                                <h6>Phone number: {{ user.phone }} </h6>
-                                <h6>Date Of Birth:  {{ user.date_of_birth }} </h6>
-                                <p>about:  {{ user.about }} <p>
+                                <h6>Name: {{ user_profile.first_name }} {{ user_profile.last_name }}</h6>
+                                <h6>Email: {{ user_profile.email }} </h6>
+                                <h6>Phone number: {{ user_profile.phone }} </h6>
+                                <h6>Date Of Birth:  {{ user_profile.date_of_birth }} </h6>
+                                <p>about:  {{ user_profile.about }} <p>
                             </div>
                         </div>
                     </div>

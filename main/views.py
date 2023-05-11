@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect, HttpResponse
 from .forms import RegisterForm, PostingModelForm, UserUpdateForm, PostingUpdateForm, CommentForm, like_clicked, LoginForm
-from django.contrib.auth import login, logout, authenticate
-from .models import User, PostModel, Comment
+from django.contrib.auth import login, authenticate
+from .models import User, PostModel, make_query
 from django.contrib.auth.decorators import login_required
+from django.db import connection
 import os
 
 
@@ -103,10 +104,13 @@ def home(request):
 
 
 @login_required
-def profile(request):
-    pk = request.user.id
+def profile(request, user_id):
+    user_profile = User.objects.raw(
+        f'SELECT * FROM user WHERE id={user_id}')[0]
     posts = PostModel.objects.raw(
-        f'SELECT * FROM post WHERE created_by={pk}')
+        f'SELECT * FROM post WHERE created_by={user_id}')
+    print(posts)
+    print(user_id)
     if request.method == 'POST':
         user_form = UserUpdateForm(
             request.POST, instance=request.user)
@@ -120,10 +124,11 @@ def profile(request):
             except:
                 pass
 
-            redirect('/profile')
+            redirect(f'/profile/{user_id}')
     else:
         user_form = UserUpdateForm(instance=request.user)
     context = {
+        'user_profile': user_profile,
         'user_form': user_form,
         'posts': posts
     }
@@ -184,3 +189,21 @@ def post_delete(request, pk):
         'post': post
     }
     return render(request, 'main/post_delete.html', context)
+
+
+@login_required
+def account_search_view(request):
+    context = {}
+    if request.method == "GET":
+        search_query = '%%' + request.GET.get("q") + '%%'
+        if len(search_query) > 0:
+            query = f"SELECT  * FROM user where first_name like '{search_query}' "
+            search_results = make_query(User, query)
+            accounts = []
+            for account in search_results:
+                accounts.append((account, False))
+            context['accounts'] = accounts
+
+        print(context['accounts'])
+
+    return render(request, "search/search_results.html", context)
