@@ -57,7 +57,8 @@
                         {{ form|crispy }}
                         <input class="btn btn-primary btn-sm" type="submit" value="Comment">
                     </form>
-                    likes: {{post.likes_number}}   <form method="get">
+                    likes: {{post.likes_number}}   
+                    <form method="get">
                         {% csrf_token %}
                         {{ like |crispy }}
                         <input class="btn btn-primary btn-sm" type="submit" value="like">

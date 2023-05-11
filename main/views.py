@@ -1,21 +1,53 @@
-from django.shortcuts import render, redirect
-from .forms import RegisterForm, PostingModelForm, UserUpdateForm, PostingUpdateForm, CommentForm, like_clicked
+from django.shortcuts import render, redirect, HttpResponse
+from .forms import RegisterForm, PostingModelForm, UserUpdateForm, PostingUpdateForm, CommentForm, like_clicked, LoginForm
 from django.contrib.auth import login, logout, authenticate
 from .models import User, PostModel, Comment
 from django.contrib.auth.decorators import login_required
 
 
 def sign_up(request):
+    user = request.user
+    if user.is_authenticated:
+        return HttpResponse(f'You are already authenticated as {user.email}.')
+    context = {}
     if request.method == 'POST':
+        print(request.POST)
         form = RegisterForm(request.POST)
         if form.is_valid():
             form.save()
             return redirect('/login')
-
+        else:
+            context['form'] = form
     else:
         form = RegisterForm()
+        context['form'] = form
 
-    return render(request, 'registration/sign_up.html', {'form': form})
+    return render(request, 'registration/sign_up.html', context)
+
+
+def login_view(request):
+    context = {}
+
+    user = request.user
+    if user.is_authenticated:
+        return redirect("/home")
+
+    if request.POST:
+        print(request.POST)
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            email = request.POST['email']
+            password = request.POST['password']
+            user = authenticate(email=email, password=password)
+            if user:
+                login(request, user)
+                return redirect("/home")
+    else:
+        form = LoginForm()
+
+    context['login_form'] = form
+
+    return render(request, "registration/login.html", context)
 
 
 @login_required
@@ -23,7 +55,6 @@ def home(request):
     users = User.objects.raw('SELECT * FROM user')
     posts = PostModel.objects.raw(
         'SELECT * FROM post order by date_created desc;')
-
     if request.method == 'POST':
         form = PostingModelForm(request.POST)
         print(request.POST)

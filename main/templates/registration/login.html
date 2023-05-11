@@ -1,36 +1,78 @@
 {% extends 'main/base.html' %}
-{% load crispy_forms_tags %}
 {% load static %}
-{% block title %}
-  Login
-{% endblock %}
-
 {% block head %}
 <link rel="stylesheet" href="{% static './login.css' %}">
 {% endblock %}
 {% block nav %} {% endblock %}
+{% load static %}
+
 
 {% block content %}
-<div class="cover">
-<div class="box">
-  <div class="title-box">
-  </div>
-  <div class="form-box">
-    <form method="post">
-      {% csrf_token %}{{form|crispy}}
-      <button type="submit" class="btn btn-primary btn-block mt-3">Log In</button>
-    </form>
-    <hr>
-    <div class="text-center my-3">
-      <a href="/password_reset">Forgotten Password?</a>
-    </div>
-    <div class="create-btn">
-      <a href="/sign-up" target="_blank">Create New Account</a>
-    </div>
-  </div>
-</div>
-</div>
-  
-{% endblock %}
+
+    <div class="container">
+
+     <div class="left_side">
+        <div class="header">
+            <h1>Facebook</h1>
+            <h3>Recent logins</h3>
+            <p>Click your picture or add an account.</p>
+        </div>
+     <div class="img_box">
+        <div class="img">
+            <img src="../media/IMG_20220923_191659_744.jpg">
+            <span>X</span>
+        </div>
+        <div class="img">
+            <img src="../media/IMG_20220923_191659_744.jpg">
+            <span>X</span>
+        </div>
+        <div class="img">
+            <img src="../media/IMG_20220923_191659_744.jpg">
+            <span>X</span>
+        </div>
+        <div class="img">
+            <img src="../media/IMG_20220923_191659_744.jpg">
+            <span>X</span>
+        </div>
+        <div class="img">
+            <img src="../media/IMG_20220923_191659_744.jpg">
+            <span>X</span>
+        </div>
+        <div class="img">
+            <img src="../media/plus-icon-simple-vector-perfect-260nw-1937184448.webp">
+        </div>
+     </div>   
+     </div>
 
 
+
+     <div class="right_side">
+         <form method="post">
+            {% csrf_token %}
+        <div class="box">
+            <input type="email" name="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+			<input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+            {% for field in login_form %}
+				{% for error in field.errors %}
+				<p style="color: red">{{ error }}</p>
+				{% endfor %}
+				{% endfor %}
+				{% if login_form.non_field_errors %}
+				<div style="color: red">
+				<p>{{login_form.non_field_errors}}</p>
+				</div>
+
+				{% endif %}
+
+            <input style="background-color:#1877f2; color: white; font-size: 20px; font-weight: bold;" type="submit" value="Log in">
+            <p> <a href="/password_reset">Forgotten Password?</a></p>
+            <div class="line"></div>
+            <div class="create-btn">
+              <a href="/sign-up" target="_blank">Create New Account</a>
+            </div>
+        </form>
+        </div>
+     </div>   
+
+    </div>
+    {% endblock %}
