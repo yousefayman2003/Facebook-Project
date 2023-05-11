@@ -3,6 +3,7 @@ from .forms import RegisterForm, PostingModelForm, UserUpdateForm, PostingUpdate
 from django.contrib.auth import login, logout, authenticate
 from .models import User, PostModel, Comment
 from django.contrib.auth.decorators import login_required
+import os
 
 
 def sign_up(request):
@@ -26,7 +27,27 @@ def sign_up(request):
 
 
 def login_view(request):
-    context = {}
+
+    def get_recent_images(folder_path):
+        num_files = 5
+
+        files = os.listdir(folder_path)
+
+        image_files = [f for f in files if f.lower().endswith(
+            ('.jpg', '.jpeg', '.png', '.gif'))]
+
+        image_files.sort(key=lambda x: os.path.getmtime(
+            os.path.join(folder_path, x)), reverse=True)
+
+        recent_files = image_files[:num_files]
+
+        return ['media/profile/' + file for file in recent_files]
+
+    path = r'{}\media\profile'.format(os.getcwd())
+
+    recent_images = get_recent_images(path)
+
+    context = {'images': recent_images}
 
     user = request.user
     if user.is_authenticated:
