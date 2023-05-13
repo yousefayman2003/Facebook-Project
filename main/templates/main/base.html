@@ -24,7 +24,7 @@
               <h1 class="nav-link text-white" ><a class="nav-link text-white" href="/home ">Home</a></h1>
             </li>
             <li class="nav-item">
-              <form method="get" class="search-bar justify-content-start" style="margin-left: 40px; margin-top: 27px;">
+              <form method="get" id="search-input" class="search-bar justify-content-start" style="margin-left: 40px; margin-top: 27px;">
                 <input type="text" class="form-control" name="q" id="id_q_large" placeholder="Search...">
               </form>
             </li>    
@@ -52,6 +52,12 @@
       integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
       crossorigin="anonymous"
 
+      const input = document.getElementById('search-input');
+      input.addEventListener('input', () => {
+      const query = input.value;
+      const newUrl = `/search?q=${encodeURIComponent(query)}`;
+      window.history.replaceState({}, '', newUrl);
+      });
     </script>
     
     

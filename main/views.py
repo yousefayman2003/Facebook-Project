@@ -196,6 +196,7 @@ def account_search_view(request):
     context = {}
     if request.method == "GET":
         search_query = '%%' + request.GET.get("q") + '%%'
+
         if len(search_query) > 0:
             query = f"SELECT  * FROM user where first_name like '{search_query}' "
             search_results = make_query(User, query)
