@@ -25,7 +25,7 @@
             <h1 class="nav-link text-white" ><a class="nav-link text-white" href="/home ">Home</a></h1>
           </li>
           <li class="nav-item">
-            <form method="get" class="search-bar justify-content-start" style="margin-left: 40px; margin-top: 27px;">
+            <form method="get" id="search-input" class="search-bar justify-content-start" style="margin-left: 40px; margin-top: 27px;">
               <input type="text" class="form-control" name="q" id="id_q_large" placeholder="Search...">
             </form>
           </li>    
@@ -72,7 +72,7 @@
                                 <h6>Email: {{ user_profile.email }} </h6>
                                 <h6>Phone number: {{ user_profile.phone }} </h6>
                                 <h6>Date Of Birth:  {{ user_profile.date_of_birth }} </h6>
-                                <p>about:  {{ user_profile.about }} <p>
+                                <h6>About:  {{ user_profile.about }}</h6>
                             </div>
                         </div>
                     </div>
@@ -103,12 +103,27 @@
     </div>
     {% endfor %}
     
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-    integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-    crossorigin="anonymous"></script>
+    
+<script 
+src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+crossorigin="anonymous">
+</script>
+    <script>
+      const input = document.getElementById('search-input');
+      input.addEventListener('input', () => {
+      const query = input.value;
+      const newUrl = `/search?q=${encodeURIComponent(query)}`;
+      window.history.replaceState({}, '', newUrl);
+      });
+    </script>
+  
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
-    crossorigin="anonymous"></script>
+    crossorigin="anonymous">
+    </script>
+
 
 </body>
 

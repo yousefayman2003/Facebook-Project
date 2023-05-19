@@ -2,6 +2,8 @@ from typing import Any
 from django.db import models, connection
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.core.validators import FileExtensionValidator
+from django.conf import settings
+from django.utils import timezone
 
 # Create your models here.
 
@@ -144,6 +146,82 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.content
+
+    class Meta:
+        db_table = 'comment'
+
+
+class Shared(models.Model):
+    # Field name made lowercase.
+    sharing = models.IntegerField(db_column='Sharing')
+    # Field name made lowercase.
+    time_of_sharing = models.DateTimeField(db_column='Time_Of_Sharing')
+    # Field name made lowercase. The composite primary key (Post_ID, User_ID) found, that is not supported. The first column is selected.
+    post = models.OneToOneField(
+        PostModel, models.CASCADE, db_column='Post_ID', primary_key=True)
+    # Field name made lowercase.
+    user = models.ForeignKey(User, models.CASCADE, db_column='User_ID')
+
+    class Meta:
+        db_table = 'shared'
+        unique_together = (('post', 'user'),)
+
+
+class Chat(models.Model):
+    chat_id = models.IntegerField(primary_key=True)
+    user1 = models.CharField(max_length=255)
+    time = models.DateTimeField(db_column='Time')  # Field name made lowercase.
+    user2 = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'chat'
+
+
+class Receiver(models.Model):
+    id = models.OneToOneField(
+        User, models.CASCADE, db_column='receiver_id', primary_key=True)
+
+    class Meta:
+        db_table = 'receiver'
+
+
+class Sender(models.Model):
+    id = models.OneToOneField(
+        User, models.CASCADE, db_column='sender_id', primary_key=True)
+
+    class Meta:
+        db_table = 'sender'
+
+
+class Friend(models.Model):
+    # The composite primary key (id_1, friendsid_2) found, that is not supported. The first column is selected.
+    id = models.AutoField(primary_key=True)
+    id_1 = models.OneToOneField(
+        User, models.CASCADE, db_column='id_1', unique=False)
+    id_2 = models.ForeignKey(
+        User, models.CASCADE, db_column='id_2', related_name='id_2', unique=False)
+
+    def __str__(self):
+        return self.id_2.first_name
+
+    class Meta:
+        db_table = 'friend'
+        unique_together = (('id_1', 'id_2'),)
+
+
+class Messages(models.Model):
+    chat_fk = models.ForeignKey(
+        Chat, on_delete=models.CASCADE, db_column='chat_id')
+    sender_fk = models.ForeignKey(
+        User, on_delete=models.CASCADE, db_column='sender_id', related_name='sender_fk')
+    receiver_fk = models.ForeignKey(
+        User, on_delete=models.CASCADE, db_column='receiver_id')
+    content = models.CharField(max_length=255)
+    time_field = models.DateTimeField(db_column='time_', auto_now_add=True)
+    message_id = models.IntegerField(primary_key=True)
+
+    class Meta:
+        db_table = 'messages'
 
 
 def make_query(model, query):

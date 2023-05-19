@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, HttpResponse
 from .forms import RegisterForm, PostingModelForm, UserUpdateForm, PostingUpdateForm, CommentForm, like_clicked, LoginForm
 from django.contrib.auth import login, authenticate
-from .models import User, PostModel, make_query
+from .models import User, PostModel, make_query, Friend, Messages
 from django.contrib.auth.decorators import login_required
 from django.db import connection
 import os
@@ -45,6 +45,7 @@ def login_view(request):
         return ['media/profile/' + file for file in recent_files]
 
     path = r'{}\media\profile'.format(os.getcwd())
+    print('path---->', path)
 
     recent_images = get_recent_images(path)
 
@@ -201,10 +202,32 @@ def account_search_view(request):
             query = f"SELECT  * FROM user where first_name like '{search_query}' "
             search_results = make_query(User, query)
             accounts = []
+            friend_query1 = f'select DISTINCT id_2, id from friend where id_1 = {request.user.id}'
+            friend_query2 = f'select DISTINCT id_1, id from friend where id_2 = {request.user.id}'
+            friend_result1 = make_query(Friend, friend_query1)
+            friend_result2 = make_query(Friend, friend_query2)
+            friends_ids1 = [friend.id_2.id for friend in friend_result1]
+            friends_ids2 = [friend.id_1.id for friend in friend_result2]
+            friends_ids = friends_ids1 + friends_ids2
             for account in search_results:
-                accounts.append((account, False))
-            context['accounts'] = accounts
 
+                if account.id in friends_ids:
+                    accounts.append((account, True))
+                else:
+                    accounts.append((account, False))
+
+            context['accounts'] = accounts
         print(context['accounts'])
 
     return render(request, "search/search_results.html", context)
+
+
+@login_required
+def chat_view(request):
+    context = {}
+    query = f'SELECT * FROM messages'
+    results = make_query(Messages, query)
+    for m in results:
+        print(dir(m))
+    context['messages'] = results
+    return render(request, 'main/chat.html', context)

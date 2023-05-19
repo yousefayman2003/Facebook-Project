@@ -89,7 +89,8 @@ class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
         image = forms.ImageField()
-        fields = ['email', 'phone', 'image']
+        about = forms.CharField()
+        fields = ['email', 'phone', 'image', 'about']
 
     def __init__(self, *args, **kwargs):
         super(UserUpdateForm, self).__init__(*args, **kwargs)
